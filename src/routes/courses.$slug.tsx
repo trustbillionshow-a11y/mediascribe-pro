@@ -240,12 +240,13 @@ function CourseBody() {
                 <DetailField icon={<Wallet className="size-3.5" />} label="Payment Plan" value={course.payment_plan ?? "—"} fullWidth />
               </div>
 
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={() => setRegisterOpen(true)}
                 className="mt-10 block text-center w-full bg-foreground text-background font-display font-bold uppercase py-4 tracking-tight hover:bg-accent hover:text-accent-foreground transition-all"
               >
                 Register for this course
-              </a>
+              </button>
               <p className="text-[10px] text-center text-muted-foreground/70 mt-4 font-mono uppercase tracking-widest">
                 Admissions team responds within 24h
               </p>
