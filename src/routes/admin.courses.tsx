@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { toast } from "sonner";
 import type { Tables, TablesInsert } from "@/integrations/supabase/types";
 
-export const Route = createFileRoute("/_authenticated/admin/courses")({
+export const Route = createFileRoute("/admin/courses")({
   component: CoursesAdmin,
 });
 
