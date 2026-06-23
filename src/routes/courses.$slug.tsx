@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { ArrowLeft, MapPin, Clock, Calendar, Home, Wallet, Briefcase, CheckCircle2 } from "lucide-react";
 import {
   courseBySlugQuery,
@@ -12,6 +12,8 @@ import {
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { CourseCard } from "@/components/site/CourseCard";
+import { RegisterDialog } from "@/components/site/RegisterDialog";
+import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/courses/$slug")({
   head: ({ params }) => ({
