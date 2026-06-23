@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { toast } from "sonner";
 import type { TablesInsert } from "@/integrations/supabase/types";
 
-export const Route = createFileRoute("/_authenticated/admin/categories")({
+export const Route = createFileRoute("/admin/categories")({
   component: CategoriesAdmin,
 });
 

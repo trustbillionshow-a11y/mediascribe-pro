@@ -12,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/admin/content")({
+export const Route = createFileRoute("/admin/content")({
   component: ContentAdmin,
 });
 

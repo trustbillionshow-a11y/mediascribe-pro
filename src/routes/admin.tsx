@@ -6,7 +6,7 @@ import { myRolesQuery } from "@/lib/admin";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 
-export const Route = createFileRoute("/_authenticated/admin")({
+export const Route = createFileRoute("/admin")({
   component: AdminLayout,
 });
 

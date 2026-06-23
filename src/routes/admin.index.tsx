@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { adminCoursesQuery, adminCategoriesQuery, adminSettingsQuery } from "@/lib/admin";
 
-export const Route = createFileRoute("/_authenticated/admin/")({
+export const Route = createFileRoute("/admin/")({
   component: Dashboard,
 });
 
