@@ -17,6 +17,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -27,22 +28,34 @@ function AuthPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setErrorMsg(null);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: { emailRedirectTo: `${window.location.origin}/admin` },
         });
         if (error) throw error;
-        toast.success("Account created. Signing you in…");
+        // If email confirmation required, no session is returned — try signing in
+        if (!data.session) {
+          const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+          if (signInErr) {
+            toast.success("Account created. Please check your email to confirm, then sign in.");
+            setMode("signin");
+            return;
+          }
+        }
+        toast.success("Account created. Redirecting…");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
       navigate({ to: "/admin" });
     } catch (err: any) {
-      toast.error(err.message ?? "Authentication failed");
+      const msg = err?.message ?? "Authentication failed";
+      setErrorMsg(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -69,18 +82,24 @@ function AuthPage() {
             <Label className="text-[10px] font-mono uppercase tracking-widest">Password</Label>
             <Input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
+          {errorMsg && (
+            <div className="text-xs font-mono text-red-400 border border-red-900/50 bg-red-950/30 p-2">
+              {errorMsg}
+            </div>
+          )}
           <Button type="submit" disabled={loading} className="w-full">
             {loading ? "…" : mode === "signin" ? "Sign in" : "Sign up"}
           </Button>
         </form>
         <button
           type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+          onClick={() => { setMode(mode === "signin" ? "signup" : "signin"); setErrorMsg(null); }}
           className="mt-6 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-accent w-full text-center"
         >
           {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
         </button>
       </div>
+      <Toaster />
     </div>
   );
 }
