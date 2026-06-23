@@ -25,7 +25,7 @@ function Dashboard() {
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border">
         {stats.map((s) => (
-          <Link key={s.label} to={s.to} className="bg-surface p-6 hover:bg-surface-2 transition-colors">
+          <Link key={s.label} to={s.to as any} className="bg-surface p-6 hover:bg-surface-2 transition-colors">
             <div className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
             <div className="font-display text-5xl font-extrabold mt-3">{s.value}</div>
           </Link>
