@@ -278,6 +278,7 @@ function CourseBody() {
           </div>
         </section>
       )}
+      <RegisterDialog course={course} open={registerOpen} onClose={() => setRegisterOpen(false)} />
     </>
   );
 }
