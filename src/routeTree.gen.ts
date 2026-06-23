@@ -20,6 +20,8 @@ import { Route as CoursesSlugRouteImport } from './routes/courses.$slug'
 import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as ApiPublicPaystackVerifyRouteImport } from './routes/api/public/paystack.verify'
+import { Route as ApiPublicPaystackTestRouteImport } from './routes/api/public/paystack.test'
 
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
@@ -76,6 +78,16 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPublicPaystackVerifyRoute = ApiPublicPaystackVerifyRouteImport.update({
+  id: '/api/public/paystack/verify',
+  path: '/api/public/paystack/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPaystackTestRoute = ApiPublicPaystackTestRouteImport.update({
+  id: '/api/public/paystack/test',
+  path: '/api/public/paystack/test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -89,6 +101,8 @@ export interface FileRoutesByFullPath {
   '/courses/$slug': typeof CoursesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/courses/': typeof CoursesIndexRoute
+  '/api/public/paystack/test': typeof ApiPublicPaystackTestRoute
+  '/api/public/paystack/verify': typeof ApiPublicPaystackVerifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,6 +115,8 @@ export interface FileRoutesByTo {
   '/courses/$slug': typeof CoursesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/courses': typeof CoursesIndexRoute
+  '/api/public/paystack/test': typeof ApiPublicPaystackTestRoute
+  '/api/public/paystack/verify': typeof ApiPublicPaystackVerifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,6 +131,8 @@ export interface FileRoutesById {
   '/courses/$slug': typeof CoursesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/courses/': typeof CoursesIndexRoute
+  '/api/public/paystack/test': typeof ApiPublicPaystackTestRoute
+  '/api/public/paystack/verify': typeof ApiPublicPaystackVerifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,6 +148,8 @@ export interface FileRouteTypes {
     | '/courses/$slug'
     | '/admin/'
     | '/courses/'
+    | '/api/public/paystack/test'
+    | '/api/public/paystack/verify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -142,6 +162,8 @@ export interface FileRouteTypes {
     | '/courses/$slug'
     | '/admin'
     | '/courses'
+    | '/api/public/paystack/test'
+    | '/api/public/paystack/verify'
   id:
     | '__root__'
     | '/'
@@ -155,6 +177,8 @@ export interface FileRouteTypes {
     | '/courses/$slug'
     | '/admin/'
     | '/courses/'
+    | '/api/public/paystack/test'
+    | '/api/public/paystack/verify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -165,6 +189,8 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   CoursesSlugRoute: typeof CoursesSlugRoute
   CoursesIndexRoute: typeof CoursesIndexRoute
+  ApiPublicPaystackTestRoute: typeof ApiPublicPaystackTestRoute
+  ApiPublicPaystackVerifyRoute: typeof ApiPublicPaystackVerifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -246,6 +272,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/public/paystack/verify': {
+      id: '/api/public/paystack/verify'
+      path: '/api/public/paystack/verify'
+      fullPath: '/api/public/paystack/verify'
+      preLoaderRoute: typeof ApiPublicPaystackVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/paystack/test': {
+      id: '/api/public/paystack/test'
+      path: '/api/public/paystack/test'
+      fullPath: '/api/public/paystack/test'
+      preLoaderRoute: typeof ApiPublicPaystackTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -273,6 +313,8 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   CoursesSlugRoute: CoursesSlugRoute,
   CoursesIndexRoute: CoursesIndexRoute,
+  ApiPublicPaystackTestRoute: ApiPublicPaystackTestRoute,
+  ApiPublicPaystackVerifyRoute: ApiPublicPaystackVerifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
