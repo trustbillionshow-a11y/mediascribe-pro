@@ -14,7 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          accent_color: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_published: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_published?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      courses: {
+        Row: {
+          accommodation_info: string | null
+          badge: string | null
+          category_id: string | null
+          created_at: string
+          delivery_mode: string
+          description: string | null
+          duration: string | null
+          hero_image_url: string | null
+          id: string
+          internship_info: string | null
+          is_featured: boolean
+          is_hot: boolean
+          is_published: boolean
+          payment_plan: string | null
+          requirements: string | null
+          schedule: string | null
+          sessions: Json
+          slug: string
+          sort_order: number
+          summary: string | null
+          tagline: string | null
+          title: string
+          tuition_ngn: number | null
+          tuition_usd: number | null
+          updated_at: string
+        }
+        Insert: {
+          accommodation_info?: string | null
+          badge?: string | null
+          category_id?: string | null
+          created_at?: string
+          delivery_mode?: string
+          description?: string | null
+          duration?: string | null
+          hero_image_url?: string | null
+          id?: string
+          internship_info?: string | null
+          is_featured?: boolean
+          is_hot?: boolean
+          is_published?: boolean
+          payment_plan?: string | null
+          requirements?: string | null
+          schedule?: string | null
+          sessions?: Json
+          slug: string
+          sort_order?: number
+          summary?: string | null
+          tagline?: string | null
+          title: string
+          tuition_ngn?: number | null
+          tuition_usd?: number | null
+          updated_at?: string
+        }
+        Update: {
+          accommodation_info?: string | null
+          badge?: string | null
+          category_id?: string | null
+          created_at?: string
+          delivery_mode?: string
+          description?: string | null
+          duration?: string | null
+          hero_image_url?: string | null
+          id?: string
+          internship_info?: string | null
+          is_featured?: boolean
+          is_hot?: boolean
+          is_published?: boolean
+          payment_plan?: string | null
+          requirements?: string | null
+          schedule?: string | null
+          sessions?: Json
+          slug?: string
+          sort_order?: number
+          summary?: string | null
+          tagline?: string | null
+          title?: string
+          tuition_ngn?: number | null
+          tuition_usd?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "courses_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_settings: {
+        Row: {
+          id: string
+          is_public: boolean
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          id?: string
+          is_public?: boolean
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          id?: string
+          is_public?: boolean
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
