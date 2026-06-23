@@ -1,9 +1,5 @@
-import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, GraduationCap, Tags, FileText, LogOut } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { myRolesQuery } from "@/lib/admin";
-import { Button } from "@/components/ui/button";
+import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { LayoutDashboard, GraduationCap, Tags, FileText } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/admin")({
@@ -18,34 +14,7 @@ const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
 ];
 
 function AdminLayout() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { data: roles, isLoading } = useQuery(myRolesQuery);
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-
-  async function signOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
-  }
-
-  if (isLoading) {
-    return <div className="min-h-screen grid place-items-center font-mono text-xs uppercase tracking-widest text-muted-foreground">Loading…</div>;
-  }
-
-  if (!roles?.includes("admin")) {
-    return (
-      <div className="min-h-screen grid place-items-center px-6 bg-background">
-        <div className="max-w-md text-center border border-border p-8 bg-surface">
-          <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-4">ERR_FORBIDDEN</div>
-          <h1 className="font-display text-3xl uppercase font-extrabold mb-4">Not an admin</h1>
-          <p className="text-sm text-muted-foreground mb-6">Your account does not have admin privileges.</p>
-          <Button onClick={signOut} variant="outline">Sign out</Button>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen flex bg-background text-foreground">
@@ -72,14 +41,6 @@ function AdminLayout() {
             );
           })}
         </nav>
-        <div className="p-3 border-t border-border">
-          <button
-            onClick={signOut}
-            className="w-full flex items-center gap-3 px-3 py-2 text-xs font-mono uppercase tracking-widest text-muted-foreground hover:text-accent transition-colors"
-          >
-            <LogOut className="size-4" /> Sign out
-          </button>
-        </div>
       </aside>
       <main className="flex-1 overflow-auto">
         <Outlet />
