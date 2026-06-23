@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, GraduationCap, Tags, FileText } from "lucide-react";
+import { LayoutDashboard, GraduationCap, Tags, FileText, Wrench, CreditCard, Users } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/admin")({
@@ -10,6 +10,9 @@ const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/courses", label: "Courses", icon: GraduationCap },
   { to: "/admin/categories", label: "Categories", icon: Tags },
+  { to: "/admin/softwares", label: "Softwares", icon: Wrench },
+  { to: "/admin/registrations", label: "Registrations", icon: Users },
+  { to: "/admin/payments", label: "Payments", icon: CreditCard },
   { to: "/admin/content", label: "Site Content", icon: FileText },
 ];
 

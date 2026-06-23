@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { ArrowLeft, MapPin, Clock, Calendar, Home, Wallet, Briefcase, CheckCircle2 } from "lucide-react";
 import {
   courseBySlugQuery,
@@ -12,6 +12,8 @@ import {
 import { SiteHeader } from "@/components/site/SiteHeader";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { CourseCard } from "@/components/site/CourseCard";
+import { RegisterDialog } from "@/components/site/RegisterDialog";
+import { Toaster } from "@/components/ui/sonner";
 
 export const Route = createFileRoute("/courses/$slug")({
   head: ({ params }) => ({
@@ -62,6 +64,7 @@ function CourseDetail() {
         <CourseBody />
       </Suspense>
       <SiteFooter />
+      <Toaster />
     </div>
   );
 }
@@ -70,6 +73,8 @@ function CourseBody() {
   const { slug } = Route.useParams();
   const { data: course } = useSuspenseQuery(courseBySlugQuery(slug));
   const { data: allCourses } = useSuspenseQuery(coursesQuery);
+  const [registerOpen, setRegisterOpen] = useState(false);
+
 
   if (!course) return null;
 
@@ -235,12 +240,13 @@ function CourseBody() {
                 <DetailField icon={<Wallet className="size-3.5" />} label="Payment Plan" value={course.payment_plan ?? "—"} fullWidth />
               </div>
 
-              <a
-                href="#"
+              <button
+                type="button"
+                onClick={() => setRegisterOpen(true)}
                 className="mt-10 block text-center w-full bg-foreground text-background font-display font-bold uppercase py-4 tracking-tight hover:bg-accent hover:text-accent-foreground transition-all"
               >
                 Register for this course
-              </a>
+              </button>
               <p className="text-[10px] text-center text-muted-foreground/70 mt-4 font-mono uppercase tracking-widest">
                 Admissions team responds within 24h
               </p>
@@ -272,6 +278,7 @@ function CourseBody() {
           </div>
         </section>
       )}
+      <RegisterDialog course={course} open={registerOpen} onClose={() => setRegisterOpen(false)} />
     </>
   );
 }

@@ -50,6 +50,47 @@ export type Database = {
         }
         Relationships: []
       }
+      course_softwares: {
+        Row: {
+          course_id: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          price_ngn: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          price_ngn?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          price_ngn?: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_softwares_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           accommodation_info: string | null
@@ -138,6 +179,80 @@ export type Database = {
             columns: ["category_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      registrations: {
+        Row: {
+          course_amount_ngn: number
+          course_id: string
+          created_at: string
+          device_other: string | null
+          device_type: string
+          email: string
+          full_name: string
+          id: string
+          notes: string | null
+          paid_at: string | null
+          payment_method: string | null
+          payment_status: string
+          paystack_reference: string | null
+          paystack_response: Json | null
+          phone: string | null
+          selected_softwares: Json
+          software_amount_ngn: number
+          total_amount_ngn: number
+          updated_at: string
+        }
+        Insert: {
+          course_amount_ngn?: number
+          course_id: string
+          created_at?: string
+          device_other?: string | null
+          device_type: string
+          email: string
+          full_name: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          paystack_reference?: string | null
+          paystack_response?: Json | null
+          phone?: string | null
+          selected_softwares?: Json
+          software_amount_ngn?: number
+          total_amount_ngn?: number
+          updated_at?: string
+        }
+        Update: {
+          course_amount_ngn?: number
+          course_id?: string
+          created_at?: string
+          device_other?: string | null
+          device_type?: string
+          email?: string
+          full_name?: string
+          id?: string
+          notes?: string | null
+          paid_at?: string | null
+          payment_method?: string | null
+          payment_status?: string
+          paystack_reference?: string | null
+          paystack_response?: Json | null
+          phone?: string | null
+          selected_softwares?: Json
+          software_amount_ngn?: number
+          total_amount_ngn?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registrations_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
             referencedColumns: ["id"]
           },
         ]
