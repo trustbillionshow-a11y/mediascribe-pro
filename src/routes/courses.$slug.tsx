@@ -75,10 +75,6 @@ function CourseBody() {
   const { data: allCourses } = useSuspenseQuery(coursesQuery);
   const [registerOpen, setRegisterOpen] = useState(false);
 
-function CourseBody() {
-  const { slug } = Route.useParams();
-  const { data: course } = useSuspenseQuery(courseBySlugQuery(slug));
-  const { data: allCourses } = useSuspenseQuery(coursesQuery);
 
   if (!course) return null;
 
