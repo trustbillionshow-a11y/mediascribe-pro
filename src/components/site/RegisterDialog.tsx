@@ -44,7 +44,6 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
     if (!pConfig?.publicKey) return toast.error("Paystack is not configured. Contact admin.");
     setSubmitting(true);
     try {
-      // 1. Save registration as pending
       const reference = `OBS-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
       const payload = {
         course_id: course.id,
@@ -72,13 +71,14 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
       const Paystack = (window as any).PaystackPop;
       if (!Paystack) throw new Error("Paystack failed to load");
 
-      const handler = Paystack.setup({
+      const setupParams = {
         key: pConfig.publicKey,
         email,
-        amount: total * 100, // kobo
+        amount: total * 100,
         currency: "NGN",
         ref: reference,
-        channels: ["card", "bank", "bank_transfer", "ussd", "mobile_money", "qr"],
+        // NOTE: do NOT pass `channels` — restricting it hides methods. Let
+        // the Paystack dashboard configuration drive available methods.
         metadata: {
           course_id: course.id,
           course_title: course.title,
@@ -92,7 +92,7 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
           ],
         },
         callback: function (response: any) {
-          // Verify on server
+          console.log("[Paystack] callback", response);
           fetch("/api/public/paystack/verify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -102,7 +102,6 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
             .then((res) => {
               if (res.ok) {
                 toast.success("Payment successful! Check your email for next steps.");
-                onClose();
               } else {
                 toast.error(`Payment could not be verified: ${res.error ?? "unknown"}`);
               }
@@ -110,12 +109,37 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
             .finally(() => setSubmitting(false));
         },
         onClose: function () {
+          console.log("[Paystack] popup closed by user");
           setSubmitting(false);
           toast.info("Payment cancelled");
         },
+      };
+
+      console.log("[Paystack] setup params", {
+        ...setupParams,
+        key: setupParams.key ? `${setupParams.key.slice(0, 12)}…` : "(missing)",
       });
-      handler.openIframe();
+
+      // CRITICAL: close the Radix Dialog BEFORE opening the Paystack iframe.
+      // Radix sets `pointer-events: none` on <body> and traps focus while the
+      // dialog is open, which blocks clicks inside Paystack's overlay. Only
+      // QR worked because it doesn't require clicking iframe controls.
+      onClose();
+
+      // Defer to next tick so Radix has unmounted its overlay & cleared
+      // body styles before Paystack injects its iframe.
+      setTimeout(() => {
+        try {
+          const handler = Paystack.setup(setupParams);
+          handler.openIframe();
+        } catch (err: any) {
+          console.error("[Paystack] openIframe failed", err);
+          toast.error(err?.message ?? "Failed to open Paystack");
+          setSubmitting(false);
+        }
+      }, 120);
     } catch (e: any) {
+      console.error("[Paystack] handlePay error", e);
       toast.error(e.message ?? "Failed to start payment");
       setSubmitting(false);
     }
