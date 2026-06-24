@@ -94,7 +94,8 @@ function CoursesAdmin() {
 
   function startEdit(c: Course) {
     setEditingId(c.id);
-    setEditing({ ...c, sessions: JSON.stringify(c.sessions, null, 2) as any });
+    const { category, id, created_at, updated_at, ...rest } = c as any;
+    setEditing({ ...rest, sessions: JSON.stringify(c.sessions, null, 2) as any });
   }
   function startNew() {
     setEditingId(null);
