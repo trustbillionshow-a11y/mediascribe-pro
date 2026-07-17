@@ -214,8 +214,7 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
   },
   ref,
 ) {
-  {
-    const isFinish = type === "finish";
+  const isFinish = type === "finish";
     const heading = isFinish ? "Certificate of Completion" : "Certificate of Enrollment";
     const body = isFinish
       ? "has successfully completed the training programme in"
