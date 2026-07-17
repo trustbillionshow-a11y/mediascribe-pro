@@ -73,6 +73,7 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
       const reference = `OBS-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
       const payload = {
         course_id: course.id,
+        user_id: userId,
         full_name: name,
         email,
         phone,
