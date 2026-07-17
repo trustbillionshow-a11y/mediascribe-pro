@@ -9,11 +9,11 @@ export const Route = createFileRoute("/account")({
   component: AccountLayout,
 });
 
-const NAV = [
+const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
   { to: "/account", label: "Overview", icon: LayoutDashboard, exact: true },
   { to: "/account/profile", label: "Profile", icon: User },
   { to: "/account/certificates", label: "Certificates", icon: Award },
-] as const;
+];
 
 function AccountLayout() {
   const navigate = useNavigate();
