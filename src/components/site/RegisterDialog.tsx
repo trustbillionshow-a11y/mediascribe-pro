@@ -65,6 +65,7 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
   const total = courseAmount + softwareAmount;
 
   async function handlePay() {
+    if (!userId) return toast.error("Please sign in to enroll");
     if (!name || !email) return toast.error("Name and email are required");
     if (!pConfig?.publicKey) return toast.error("Paystack is not configured. Contact admin.");
     setSubmitting(true);
