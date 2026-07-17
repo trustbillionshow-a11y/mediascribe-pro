@@ -1,5 +1,6 @@
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Loader2, Plus, X, CreditCard } from "lucide-react";
@@ -22,6 +23,30 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
   const { data: softwares } = useQuery({ ...courseSoftwaresQuery(course.id), enabled: open });
   const { data: pConfig } = useQuery({ ...paystackPublicConfigQuery, enabled: open });
 
+  const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    supabase.auth.getUser().then(async ({ data }) => {
+      const u = data.user;
+      setUserId(u?.id ?? null);
+      setAuthChecked(true);
+      if (u) {
+        setEmail((prev) => prev || u.email || "");
+        const { data: prof } = await (supabase as any)
+          .from("profiles")
+          .select("full_name, phone")
+          .eq("user_id", u.id)
+          .maybeSingle();
+        if (prof) {
+          setName((prev) => prev || prof.full_name || "");
+          setPhone((prev) => prev || prof.phone || "");
+        }
+      }
+    });
+  }, [open]);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -40,6 +65,7 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
   const total = courseAmount + softwareAmount;
 
   async function handlePay() {
+    if (!userId) return toast.error("Please sign in to enroll");
     if (!name || !email) return toast.error("Name and email are required");
     if (!pConfig?.publicKey) return toast.error("Paystack is not configured. Contact admin.");
     setSubmitting(true);
@@ -47,6 +73,7 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
       const reference = `OBS-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`.toUpperCase();
       const payload = {
         course_id: course.id,
+        user_id: userId,
         full_name: name,
         email,
         phone,
@@ -155,6 +182,32 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
           </DialogTitle>
         </DialogHeader>
 
+        {authChecked && !userId ? (
+          <div className="mt-4 border border-accent/40 bg-accent/5 p-6 text-center">
+            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-2">Sign in required</div>
+            <p className="text-sm mb-5">
+              Create a student account (or sign in) to enroll. Your profile helps us process payments,
+              issue receipts, and later generate your completion certificate.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Link
+                to="/auth"
+                search={{ redirect: `/courses/${course.slug}` } as any}
+                onClick={onClose}
+                className="bg-accent text-accent-foreground px-5 py-2.5 text-xs font-mono uppercase tracking-widest"
+              >
+                Sign in / Create account
+              </Link>
+              <button
+                onClick={onClose}
+                className="border border-border px-5 py-2.5 text-xs font-mono uppercase tracking-widest hover:bg-white/5"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+        <>
         <div className="grid md:grid-cols-2 gap-4 mt-2">
           <Field label="Full name *">
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" />
@@ -245,6 +298,8 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
             Pay {formatNGN(total)}
           </Button>
         </div>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );

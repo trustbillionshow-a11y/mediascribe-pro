@@ -12,10 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CoursesIndexRouteImport } from './routes/courses.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as AccountIndexRouteImport } from './routes/account.index'
 import { Route as CoursesSlugRouteImport } from './routes/courses.$slug'
 import { Route as AdminSoftwaresRouteImport } from './routes/admin.softwares'
 import { Route as AdminRegistrationsRouteImport } from './routes/admin.registrations'
@@ -23,6 +25,8 @@ import { Route as AdminPaymentsRouteImport } from './routes/admin.payments'
 import { Route as AdminCoursesRouteImport } from './routes/admin.courses'
 import { Route as AdminContentRouteImport } from './routes/admin.content'
 import { Route as AdminCategoriesRouteImport } from './routes/admin.categories'
+import { Route as AccountProfileRouteImport } from './routes/account.profile'
+import { Route as AccountCertificatesRouteImport } from './routes/account.certificates'
 import { Route as ApiPublicPaystackVerifyRouteImport } from './routes/api/public/paystack.verify'
 import { Route as ApiPublicPaystackTestRouteImport } from './routes/api/public/paystack.test'
 
@@ -39,6 +43,11 @@ const AuthRoute = AuthRouteImport.update({
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -60,6 +69,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const AccountIndexRoute = AccountIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AccountRoute,
 } as any)
 const CoursesSlugRoute = CoursesSlugRouteImport.update({
   id: '/courses/$slug',
@@ -96,6 +110,16 @@ const AdminCategoriesRoute = AdminCategoriesRouteImport.update({
   path: '/categories',
   getParentRoute: () => AdminRoute,
 } as any)
+const AccountProfileRoute = AccountProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => AccountRoute,
+} as any)
+const AccountCertificatesRoute = AccountCertificatesRouteImport.update({
+  id: '/certificates',
+  path: '/certificates',
+  getParentRoute: () => AccountRoute,
+} as any)
 const ApiPublicPaystackVerifyRoute = ApiPublicPaystackVerifyRouteImport.update({
   id: '/api/public/paystack/verify',
   path: '/api/public/paystack/verify',
@@ -110,9 +134,12 @@ const ApiPublicPaystackTestRoute = ApiPublicPaystackTestRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/account/certificates': typeof AccountCertificatesRoute
+  '/account/profile': typeof AccountProfileRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/courses': typeof AdminCoursesRoute
@@ -120,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/softwares': typeof AdminSoftwaresRoute
   '/courses/$slug': typeof CoursesSlugRoute
+  '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/courses/': typeof CoursesIndexRoute
   '/api/public/paystack/test': typeof ApiPublicPaystackTestRoute
@@ -130,6 +158,8 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/account/certificates': typeof AccountCertificatesRoute
+  '/account/profile': typeof AccountProfileRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/courses': typeof AdminCoursesRoute
@@ -137,6 +167,7 @@ export interface FileRoutesByTo {
   '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/softwares': typeof AdminSoftwaresRoute
   '/courses/$slug': typeof CoursesSlugRoute
+  '/account': typeof AccountIndexRoute
   '/admin': typeof AdminIndexRoute
   '/courses': typeof CoursesIndexRoute
   '/api/public/paystack/test': typeof ApiPublicPaystackTestRoute
@@ -146,9 +177,12 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRouteWithChildren
   '/admin': typeof AdminRouteWithChildren
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
+  '/account/certificates': typeof AccountCertificatesRoute
+  '/account/profile': typeof AccountProfileRoute
   '/admin/categories': typeof AdminCategoriesRoute
   '/admin/content': typeof AdminContentRoute
   '/admin/courses': typeof AdminCoursesRoute
@@ -156,6 +190,7 @@ export interface FileRoutesById {
   '/admin/registrations': typeof AdminRegistrationsRoute
   '/admin/softwares': typeof AdminSoftwaresRoute
   '/courses/$slug': typeof CoursesSlugRoute
+  '/account/': typeof AccountIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/courses/': typeof CoursesIndexRoute
   '/api/public/paystack/test': typeof ApiPublicPaystackTestRoute
@@ -166,9 +201,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/account'
     | '/admin'
     | '/auth'
     | '/contact'
+    | '/account/certificates'
+    | '/account/profile'
     | '/admin/categories'
     | '/admin/content'
     | '/admin/courses'
@@ -176,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin/registrations'
     | '/admin/softwares'
     | '/courses/$slug'
+    | '/account/'
     | '/admin/'
     | '/courses/'
     | '/api/public/paystack/test'
@@ -186,6 +225,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/auth'
     | '/contact'
+    | '/account/certificates'
+    | '/account/profile'
     | '/admin/categories'
     | '/admin/content'
     | '/admin/courses'
@@ -193,6 +234,7 @@ export interface FileRouteTypes {
     | '/admin/registrations'
     | '/admin/softwares'
     | '/courses/$slug'
+    | '/account'
     | '/admin'
     | '/courses'
     | '/api/public/paystack/test'
@@ -201,9 +243,12 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/account'
     | '/admin'
     | '/auth'
     | '/contact'
+    | '/account/certificates'
+    | '/account/profile'
     | '/admin/categories'
     | '/admin/content'
     | '/admin/courses'
@@ -211,6 +256,7 @@ export interface FileRouteTypes {
     | '/admin/registrations'
     | '/admin/softwares'
     | '/courses/$slug'
+    | '/account/'
     | '/admin/'
     | '/courses/'
     | '/api/public/paystack/test'
@@ -220,6 +266,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AccountRoute: typeof AccountRouteWithChildren
   AdminRoute: typeof AdminRouteWithChildren
   AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
@@ -252,6 +299,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -279,6 +333,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/account/': {
+      id: '/account/'
+      path: '/'
+      fullPath: '/account/'
+      preLoaderRoute: typeof AccountIndexRouteImport
+      parentRoute: typeof AccountRoute
     }
     '/courses/$slug': {
       id: '/courses/$slug'
@@ -329,6 +390,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/account/profile': {
+      id: '/account/profile'
+      path: '/profile'
+      fullPath: '/account/profile'
+      preLoaderRoute: typeof AccountProfileRouteImport
+      parentRoute: typeof AccountRoute
+    }
+    '/account/certificates': {
+      id: '/account/certificates'
+      path: '/certificates'
+      fullPath: '/account/certificates'
+      preLoaderRoute: typeof AccountCertificatesRouteImport
+      parentRoute: typeof AccountRoute
+    }
     '/api/public/paystack/verify': {
       id: '/api/public/paystack/verify'
       path: '/api/public/paystack/verify'
@@ -345,6 +420,21 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AccountRouteChildren {
+  AccountCertificatesRoute: typeof AccountCertificatesRoute
+  AccountProfileRoute: typeof AccountProfileRoute
+  AccountIndexRoute: typeof AccountIndexRoute
+}
+
+const AccountRouteChildren: AccountRouteChildren = {
+  AccountCertificatesRoute: AccountCertificatesRoute,
+  AccountProfileRoute: AccountProfileRoute,
+  AccountIndexRoute: AccountIndexRoute,
+}
+
+const AccountRouteWithChildren =
+  AccountRoute._addFileChildren(AccountRouteChildren)
 
 interface AdminRouteChildren {
   AdminCategoriesRoute: typeof AdminCategoriesRoute
@@ -371,6 +461,7 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AccountRoute: AccountRouteWithChildren,
   AdminRoute: AdminRouteWithChildren,
   AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,

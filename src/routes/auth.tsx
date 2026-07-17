@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link, useSearch } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,11 +8,16 @@ import { toast, Toaster } from "sonner";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
+  validateSearch: (s: Record<string, unknown>) => ({
+    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+  }),
   component: AuthPage,
 });
 
 function AuthPage() {
   const navigate = useNavigate();
+  const search = useSearch({ from: "/auth" }) as { redirect?: string };
+  const dest = (search.redirect && search.redirect.startsWith("/")) ? search.redirect : "/account";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,9 +26,9 @@ function AuthPage() {
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/admin" });
+      if (data.user) navigate({ to: dest });
     });
-  }, [navigate]);
+  }, [navigate, dest]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,10 +39,9 @@ function AuthPage() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: `${window.location.origin}/admin` },
+          options: { emailRedirectTo: `${window.location.origin}${dest}` },
         });
         if (error) throw error;
-        // If email confirmation required, no session is returned — try signing in
         if (!data.session) {
           const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
           if (signInErr) {
@@ -51,7 +55,7 @@ function AuthPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-      navigate({ to: "/admin" });
+      navigate({ to: dest });
     } catch (err: any) {
       const msg = err?.message ?? "Authentication failed";
       setErrorMsg(msg);

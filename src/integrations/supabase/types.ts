@@ -183,6 +183,72 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          address: string | null
+          avatar_url: string | null
+          city: string | null
+          created_at: string
+          date_of_birth: string | null
+          email: string | null
+          full_name: string | null
+          gender: string | null
+          id: string
+          lga: string | null
+          nationality: string | null
+          next_of_kin_name: string | null
+          next_of_kin_phone: string | null
+          nin: string | null
+          occupation: string | null
+          phone: string | null
+          state_of_origin: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id?: string
+          lga?: string | null
+          nationality?: string | null
+          next_of_kin_name?: string | null
+          next_of_kin_phone?: string | null
+          nin?: string | null
+          occupation?: string | null
+          phone?: string | null
+          state_of_origin?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          avatar_url?: string | null
+          city?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string | null
+          full_name?: string | null
+          gender?: string | null
+          id?: string
+          lga?: string | null
+          nationality?: string | null
+          next_of_kin_name?: string | null
+          next_of_kin_phone?: string | null
+          nin?: string | null
+          occupation?: string | null
+          phone?: string | null
+          state_of_origin?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       registrations: {
         Row: {
           course_amount_ngn: number
@@ -204,6 +270,7 @@ export type Database = {
           software_amount_ngn: number
           total_amount_ngn: number
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           course_amount_ngn?: number
@@ -225,6 +292,7 @@ export type Database = {
           software_amount_ngn?: number
           total_amount_ngn?: number
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           course_amount_ngn?: number
@@ -246,6 +314,7 @@ export type Database = {
           software_amount_ngn?: number
           total_amount_ngn?: number
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
