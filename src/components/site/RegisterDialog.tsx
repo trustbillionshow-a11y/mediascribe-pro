@@ -298,6 +298,8 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
             Pay {formatNGN(total)}
           </Button>
         </div>
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );
