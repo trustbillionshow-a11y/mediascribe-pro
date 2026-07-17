@@ -406,9 +406,6 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
           </div>
         </div>
       </div>
-    );
-  };
-  return (require("react").forwardRef(Comp)) as unknown as (
-    props: CertProps & { ref?: React.Ref<HTMLDivElement> }
-  ) => JSX.Element;
-})();
+  );
+});
+
