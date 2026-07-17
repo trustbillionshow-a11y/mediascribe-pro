@@ -182,6 +182,32 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
           </DialogTitle>
         </DialogHeader>
 
+        {authChecked && !userId ? (
+          <div className="mt-4 border border-accent/40 bg-accent/5 p-6 text-center">
+            <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-2">Sign in required</div>
+            <p className="text-sm mb-5">
+              Create a student account (or sign in) to enroll. Your profile helps us process payments,
+              issue receipts, and later generate your completion certificate.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Link
+                to="/auth"
+                search={{ redirect: `/courses/${course.slug}` } as any}
+                onClick={onClose}
+                className="bg-accent text-accent-foreground px-5 py-2.5 text-xs font-mono uppercase tracking-widest"
+              >
+                Sign in / Create account
+              </Link>
+              <button
+                onClick={onClose}
+                className="border border-border px-5 py-2.5 text-xs font-mono uppercase tracking-widest hover:bg-white/5"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+        <>
         <div className="grid md:grid-cols-2 gap-4 mt-2">
           <Field label="Full name *">
             <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Jane Doe" />
