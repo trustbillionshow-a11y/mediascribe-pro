@@ -207,14 +207,14 @@ type CertProps = {
   signatoryTitle: string;
 };
 
-const Certificate = (function () {
-  const Comp = (
-    {
-      brand, brandTag, type, studentName, courseTitle, courseTagline,
-      amount, reference, date, signatoryName, signatoryTitle,
-    }: CertProps,
-    ref: React.Ref<HTMLDivElement>,
-  ) => {
+const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
+  {
+    brand, brandTag, type, studentName, courseTitle, courseTagline,
+    amount, reference, date, signatoryName, signatoryTitle,
+  },
+  ref,
+) {
+  {
     const isFinish = type === "finish";
     const heading = isFinish ? "Certificate of Completion" : "Certificate of Enrollment";
     const body = isFinish
