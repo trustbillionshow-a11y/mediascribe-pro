@@ -23,6 +23,30 @@ export function RegisterDialog({ course, open, onClose }: { course: Course; open
   const { data: softwares } = useQuery({ ...courseSoftwaresQuery(course.id), enabled: open });
   const { data: pConfig } = useQuery({ ...paystackPublicConfigQuery, enabled: open });
 
+  const [userId, setUserId] = useState<string | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    supabase.auth.getUser().then(async ({ data }) => {
+      const u = data.user;
+      setUserId(u?.id ?? null);
+      setAuthChecked(true);
+      if (u) {
+        setEmail((prev) => prev || u.email || "");
+        const { data: prof } = await (supabase as any)
+          .from("profiles")
+          .select("full_name, phone")
+          .eq("user_id", u.id)
+          .maybeSingle();
+        if (prof) {
+          setName((prev) => prev || prof.full_name || "");
+          setPhone((prev) => prev || prof.phone || "");
+        }
+      }
+    });
+  }, [open]);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
