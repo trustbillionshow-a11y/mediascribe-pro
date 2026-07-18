@@ -72,10 +72,10 @@ function AuthPage() {
           ← Back to site
         </Link>
         <h1 className="font-display text-3xl uppercase font-extrabold mt-6 mb-2">
-          {mode === "signin" ? "Sign in" : "Create admin"}
+          {mode === "signin" ? "Sign in" : "Create account"}
         </h1>
         <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-8">
-          {mode === "signin" ? "Admin access" : "First signup becomes admin"}
+          {mode === "signin" ? "Access your student account" : "Register to enroll & track your courses"}
         </p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
