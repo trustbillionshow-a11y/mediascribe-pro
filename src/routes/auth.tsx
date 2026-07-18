@@ -6,6 +6,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast, Toaster } from "sonner";
 
+const AUTH_TIMEOUT_MS = 20000;
+
+function authErrorMessage(error: unknown) {
+  if (error instanceof Error) {
+    if (error.message === "AUTH_TIMEOUT") {
+      return "The connection is taking too long. Please check your internet and try again.";
+    }
+    if (error.message === "Failed to fetch" || error.message === "Load failed") {
+      return "Could not reach the login service. Please try again.";
+    }
+    return error.message;
+  }
+  return "Authentication failed. Please try again.";
+}
+
+async function withAuthTimeout<T>(promise: Promise<T>) {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => reject(new Error("AUTH_TIMEOUT")), AUTH_TIMEOUT_MS);
+  });
+  try {
+    return await Promise.race([promise, timeout]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+}
+
 export const Route = createFileRoute("/auth")({
   ssr: false,
   validateSearch: (s: Record<string, unknown>) => ({
@@ -32,18 +59,23 @@ function AuthPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
     setErrorMsg(null);
     try {
       if (mode === "signup") {
-        const { data, error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: `${window.location.origin}${dest}` },
-        });
+        const { data, error } = await withAuthTimeout(
+          supabase.auth.signUp({
+            email: email.trim(),
+            password,
+            options: { emailRedirectTo: `${window.location.origin}${dest}` },
+          }),
+        );
         if (error) throw error;
         if (!data.session) {
-          const { error: signInErr } = await supabase.auth.signInWithPassword({ email, password });
+          const { error: signInErr } = await withAuthTimeout(
+            supabase.auth.signInWithPassword({ email: email.trim(), password }),
+          );
           if (signInErr) {
             toast.success("Account created. Please check your email to confirm, then sign in.");
             setMode("signin");
@@ -52,12 +84,14 @@ function AuthPage() {
         }
         toast.success("Account created. Redirecting…");
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await withAuthTimeout(
+          supabase.auth.signInWithPassword({ email: email.trim(), password }),
+        );
         if (error) throw error;
       }
       navigate({ to: dest });
     } catch (err: any) {
-      const msg = err?.message ?? "Authentication failed";
+      const msg = authErrorMessage(err);
       setErrorMsg(msg);
       toast.error(msg);
     } finally {
