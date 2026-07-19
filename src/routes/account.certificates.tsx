@@ -18,7 +18,7 @@ export const Route = createFileRoute("/account/certificates")({
   component: CertificatesPage,
 });
 
-type CertType = "start" | "finish";
+type CertType = "start" | "finish" | "membership";
 type Software = { id: string; name: string; price_ngn: number; course_id: string };
 
 type CertDraft = {
