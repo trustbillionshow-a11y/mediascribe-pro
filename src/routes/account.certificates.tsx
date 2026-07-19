@@ -18,7 +18,7 @@ export const Route = createFileRoute("/account/certificates")({
   component: CertificatesPage,
 });
 
-type CertType = "start" | "finish";
+type CertType = "start" | "finish" | "membership";
 type Software = { id: string; name: string; price_ngn: number; course_id: string };
 
 type CertDraft = {
@@ -186,12 +186,14 @@ function CertificatesPage() {
   const softwareTotal = chosenSoftwares.reduce((sum, s) => sum + (s.price_ngn ?? 0), 0);
 
   return (
-    <div className="p-10 max-w-6xl">
+    <div className="p-4 sm:p-6 lg:p-10 max-w-6xl">
       <div className="font-mono text-[10px] uppercase tracking-[0.3em] text-accent mb-2">Documents</div>
-      <h1 className="font-display text-4xl uppercase font-extrabold tracking-tighter mb-2">Certificates & Receipts</h1>
-      <p className="text-sm text-muted-foreground mb-8">
-        Fill in the details, choose a course and any bundled software, then download a company-grade
-        certificate as PNG or PDF. Create as many certificates as you need.
+      <h1 className="font-display text-2xl sm:text-3xl lg:text-4xl uppercase font-extrabold tracking-tighter mb-2">
+        Certificates &amp; Receipts
+      </h1>
+      <p className="text-sm text-muted-foreground mb-6 sm:mb-8">
+        Fill in the details, choose a course and any bundled software, then download a
+        company-grade certificate as PNG or PDF. Create as many certificates as you need.
       </p>
 
       {/* Draft tabs */}
@@ -206,7 +208,7 @@ function CertificatesPage() {
                 isActive ? "border-accent bg-accent text-accent-foreground" : "border-border text-muted-foreground hover:text-foreground"
               }`}
             >
-              <button onClick={() => setActiveKey(d.key)} className="max-w-[180px] truncate">{label}</button>
+              <button onClick={() => setActiveKey(d.key)} className="max-w-[140px] sm:max-w-[180px] truncate">{label}</button>
               <button
                 onClick={() => removeDraft(d.key)}
                 className="p-1 hover:text-red-400"
@@ -224,7 +226,7 @@ function CertificatesPage() {
       </div>
 
       {/* Form */}
-      <div className="grid md:grid-cols-2 gap-4 mb-4 p-5 border border-border">
+      <div className="grid sm:grid-cols-2 gap-4 mb-4 p-4 sm:p-5 border border-border">
         <Field label="Recipient full name">
           <Input
             value={active.studentName}
@@ -249,8 +251,9 @@ function CertificatesPage() {
           <Select value={active.type} onValueChange={(v) => updateActive({ type: v as CertType })}>
             <SelectTrigger><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="start">Start (Enrollment Receipt)</SelectItem>
-              <SelectItem value="finish">Finish (Completion Certificate)</SelectItem>
+              <SelectItem value="start">Beginning · Enrollment &amp; Registration Receipt</SelectItem>
+              <SelectItem value="membership">Membership · Official Cohort Membership</SelectItem>
+              <SelectItem value="finish">Completion · Graduation Certificate</SelectItem>
             </SelectContent>
           </Select>
         </Field>
@@ -258,7 +261,7 @@ function CertificatesPage() {
           <Input type="date" value={active.date} onChange={(e) => updateActive({ date: e.target.value })} />
         </Field>
 
-        <div className="md:col-span-2">
+        <div className="sm:col-span-2">
           <Label className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground mb-2 block">
             Software included {courseSoftwares.length > 0 && `(${courseSoftwares.length} available)`}
           </Label>
@@ -307,21 +310,21 @@ function CertificatesPage() {
       </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
-        <Button onClick={downloadPNG} disabled={busy !== null}>
+        <Button onClick={downloadPNG} disabled={busy !== null} className="flex-1 sm:flex-none">
           {busy === "png" ? <Loader2 className="size-4 mr-2 animate-spin" /> : <FileImage className="size-4 mr-2" />}
           Download PNG
         </Button>
-        <Button onClick={downloadPDF} disabled={busy !== null} variant="secondary">
+        <Button onClick={downloadPDF} disabled={busy !== null} variant="secondary" className="flex-1 sm:flex-none">
           {busy === "pdf" ? <Loader2 className="size-4 mr-2 animate-spin" /> : <FileText className="size-4 mr-2" />}
           Download PDF
         </Button>
-        <div className="ml-auto flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+        <div className="hidden sm:flex ml-auto items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
           <Download className="size-3" /> A4 landscape · 300dpi ready
         </div>
       </div>
 
-      {/* Live preview */}
-      <div className="overflow-x-auto border border-border bg-neutral-100 p-6">
+      {/* Live preview — scrollable on mobile so full A4 stays legible */}
+      <div className="-mx-4 sm:mx-0 overflow-x-auto border-y sm:border border-border bg-neutral-100 p-3 sm:p-6">
         <div className="mx-auto" style={{ width: 1123 }}>
           <Certificate
             ref={certRef}
@@ -339,6 +342,9 @@ function CertificatesPage() {
             signatoryTitle={signatoryTitle}
           />
         </div>
+      </div>
+      <div className="sm:hidden mt-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground text-center">
+        Swipe preview horizontally · A4 landscape · 300dpi ready
       </div>
 
       {!active.studentName || !selectedCourse ? (
@@ -382,11 +388,31 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
   },
   ref,
 ) {
-  const isFinish = type === "finish";
-  const heading = isFinish ? "Certificate of Completion" : "Certificate of Enrollment";
-  const body = isFinish
-    ? "has successfully completed the training programme in"
-    : "has been officially enrolled in the training programme";
+  const meta =
+    type === "finish"
+      ? {
+          heading: "Certificate of Completion",
+          statusLabel: "Certified Graduate",
+          preamble: "Know all persons by these presents that",
+          body: "having satisfied the academic requirements, completed all assessments and produced the required practical works, is hereby conferred the status of graduate of the professional training programme in",
+          closing: "In recognition of dedication, craft and creative discipline demonstrated throughout the programme.",
+        }
+      : type === "membership"
+      ? {
+          heading: "Certificate of Membership",
+          statusLabel: "Official Cohort Member",
+          preamble: "This is to formally recognise that",
+          body: "has been duly admitted and inducted as a bona fide member of the current studio cohort, with full access to mentorship, studio facilities and continuing professional development for the programme in",
+          closing: "Granted with all rights, privileges and responsibilities accorded to members in good standing of the academy.",
+        }
+      : {
+          heading: "Certificate of Enrollment",
+          statusLabel: "Registered Student · Beginning",
+          preamble: "This is to officially acknowledge that",
+          body: "has been formally registered, has fulfilled the pre-programme requirements and is admitted to commence the professional training programme in",
+          closing: "This document serves as an official receipt of registration and confirmation of a reserved seat within the incoming cohort.",
+        };
+  const { heading, statusLabel, preamble, body, closing } = meta;
   const humanDate = new Date(date + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   return (
     <div
@@ -425,21 +451,30 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
 
         <div style={{ marginTop: 14, height: 1, width: 220, background: "#b8933f" }} />
 
-        <div style={{ marginTop: 16, fontFamily: "'Georgia', 'Times New Roman', serif", fontStyle: "italic", fontSize: 28, color: "#7a5a1e" }}>
+        <div style={{ marginTop: 14, fontFamily: "'Georgia', 'Times New Roman', serif", fontStyle: "italic", fontSize: 28, color: "#7a5a1e" }}>
           {heading}
         </div>
 
-        <div style={{ marginTop: 18, fontSize: 13, color: "#333" }}>This is to certify that</div>
+        <div style={{
+          marginTop: 8, display: "inline-block", padding: "4px 14px",
+          border: "1px solid #7a5a1e", background: "rgba(184, 147, 63, 0.08)",
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          letterSpacing: "0.35em", textTransform: "uppercase", color: "#7a5a1e",
+        }}>
+          {statusLabel}
+        </div>
+
+        <div style={{ marginTop: 16, fontSize: 13, color: "#333", fontStyle: "italic" }}>{preamble}</div>
 
         <div style={{
-          marginTop: 10, fontFamily: "'Georgia', 'Times New Roman', serif",
+          marginTop: 8, fontFamily: "'Georgia', 'Times New Roman', serif",
           fontSize: 46, fontWeight: 700, color: "#111",
           borderBottom: "1px solid #b8933f", paddingBottom: 6, minWidth: 500,
         }}>
           {studentName}
         </div>
 
-        <div style={{ marginTop: 14, fontSize: 13, color: "#333", maxWidth: 780 }}>{body}</div>
+        <div style={{ marginTop: 12, fontSize: 13, color: "#333", maxWidth: 820, lineHeight: 1.55 }}>{body}</div>
 
         <div style={{ marginTop: 8, fontWeight: 800, fontSize: 22, textTransform: "uppercase", letterSpacing: "-0.01em" }}>
           {courseTitle}
@@ -447,6 +482,11 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
         {courseTagline && (
           <div style={{ marginTop: 3, fontSize: 12, color: "#666", fontStyle: "italic" }}>{courseTagline}</div>
         )}
+
+        <div style={{ marginTop: 10, fontSize: 11, color: "#555", maxWidth: 780, fontStyle: "italic", lineHeight: 1.5 }}>
+          {closing}
+        </div>
+
 
         {softwares.length > 0 && (
           <div style={{ marginTop: 14, width: "100%", maxWidth: 760, border: "1px solid #b8933f", padding: "10px 14px", background: "rgba(184, 147, 63, 0.06)" }}>
