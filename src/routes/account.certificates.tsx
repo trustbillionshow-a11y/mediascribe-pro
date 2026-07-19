@@ -388,11 +388,31 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
   },
   ref,
 ) {
-  const isFinish = type === "finish";
-  const heading = isFinish ? "Certificate of Completion" : "Certificate of Enrollment";
-  const body = isFinish
-    ? "has successfully completed the training programme in"
-    : "has been officially enrolled in the training programme";
+  const meta =
+    type === "finish"
+      ? {
+          heading: "Certificate of Completion",
+          statusLabel: "Certified Graduate",
+          preamble: "Know all persons by these presents that",
+          body: "having satisfied the academic requirements, completed all assessments and produced the required practical works, is hereby conferred the status of graduate of the professional training programme in",
+          closing: "In recognition of dedication, craft and creative discipline demonstrated throughout the programme.",
+        }
+      : type === "membership"
+      ? {
+          heading: "Certificate of Membership",
+          statusLabel: "Official Cohort Member",
+          preamble: "This is to formally recognise that",
+          body: "has been duly admitted and inducted as a bona fide member of the current studio cohort, with full access to mentorship, studio facilities and continuing professional development for the programme in",
+          closing: "Granted with all rights, privileges and responsibilities accorded to members in good standing of the academy.",
+        }
+      : {
+          heading: "Certificate of Enrollment",
+          statusLabel: "Registered Student · Beginning",
+          preamble: "This is to officially acknowledge that",
+          body: "has been formally registered, has fulfilled the pre-programme requirements and is admitted to commence the professional training programme in",
+          closing: "This document serves as an official receipt of registration and confirmation of a reserved seat within the incoming cohort.",
+        };
+  const { heading, statusLabel, preamble, body, closing } = meta;
   const humanDate = new Date(date + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
   return (
     <div
