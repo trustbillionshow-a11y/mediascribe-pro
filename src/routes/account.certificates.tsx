@@ -451,21 +451,30 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
 
         <div style={{ marginTop: 14, height: 1, width: 220, background: "#b8933f" }} />
 
-        <div style={{ marginTop: 16, fontFamily: "'Georgia', 'Times New Roman', serif", fontStyle: "italic", fontSize: 28, color: "#7a5a1e" }}>
+        <div style={{ marginTop: 14, fontFamily: "'Georgia', 'Times New Roman', serif", fontStyle: "italic", fontSize: 28, color: "#7a5a1e" }}>
           {heading}
         </div>
 
-        <div style={{ marginTop: 18, fontSize: 13, color: "#333" }}>This is to certify that</div>
+        <div style={{
+          marginTop: 8, display: "inline-block", padding: "4px 14px",
+          border: "1px solid #7a5a1e", background: "rgba(184, 147, 63, 0.08)",
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 9,
+          letterSpacing: "0.35em", textTransform: "uppercase", color: "#7a5a1e",
+        }}>
+          {statusLabel}
+        </div>
+
+        <div style={{ marginTop: 16, fontSize: 13, color: "#333", fontStyle: "italic" }}>{preamble}</div>
 
         <div style={{
-          marginTop: 10, fontFamily: "'Georgia', 'Times New Roman', serif",
+          marginTop: 8, fontFamily: "'Georgia', 'Times New Roman', serif",
           fontSize: 46, fontWeight: 700, color: "#111",
           borderBottom: "1px solid #b8933f", paddingBottom: 6, minWidth: 500,
         }}>
           {studentName}
         </div>
 
-        <div style={{ marginTop: 14, fontSize: 13, color: "#333", maxWidth: 780 }}>{body}</div>
+        <div style={{ marginTop: 12, fontSize: 13, color: "#333", maxWidth: 820, lineHeight: 1.55 }}>{body}</div>
 
         <div style={{ marginTop: 8, fontWeight: 800, fontSize: 22, textTransform: "uppercase", letterSpacing: "-0.01em" }}>
           {courseTitle}
@@ -473,6 +482,11 @@ const Certificate = forwardRef<HTMLDivElement, CertProps>(function Certificate(
         {courseTagline && (
           <div style={{ marginTop: 3, fontSize: 12, color: "#666", fontStyle: "italic" }}>{courseTagline}</div>
         )}
+
+        <div style={{ marginTop: 10, fontSize: 11, color: "#555", maxWidth: 780, fontStyle: "italic", lineHeight: 1.5 }}>
+          {closing}
+        </div>
+
 
         {softwares.length > 0 && (
           <div style={{ marginTop: 14, width: "100%", maxWidth: 760, border: "1px solid #b8933f", padding: "10px 14px", background: "rgba(184, 147, 63, 0.06)" }}>
