@@ -139,13 +139,50 @@ function CertificatesPage() {
     try { await (document as any).fonts?.ready; } catch { /* noop */ }
   }
 
+  // html2canvas (and older jsPDF) cannot parse oklch() colors coming from
+  // the parent page's Tailwind/shadcn theme. We sanitize the cloned DOM before
+  // rendering, replacing any oklch value with a printable hex fallback.
+  function sanitizeClone(clonedDoc: Document) {
+    const colorProps = [
+      "color", "background-color", "background", "border-color",
+      "border-top-color", "border-right-color", "border-bottom-color", "border-left-color",
+      "outline-color", "box-shadow", "text-shadow", "fill", "stroke",
+    ];
+    const win = clonedDoc.defaultView;
+    if (!win) return;
+    clonedDoc.querySelectorAll("*").forEach((el) => {
+      const htmlEl = el as HTMLElement;
+      const computed = win.getComputedStyle(htmlEl);
+      colorProps.forEach((prop) => {
+        const value = computed.getPropertyValue(prop);
+        if (value && value.includes("oklch")) {
+          // Force a safe hex fallback. For background use parchment, for text use dark
+          const fallback = prop.includes("background") ? "#fdfaf3" : "#111111";
+          htmlEl.style.setProperty(prop, fallback, "important");
+        }
+      });
+    });
+  }
+
+  async function renderCertificate() {
+    if (!certRef.current) throw new Error("Certificate not ready");
+    const html2canvas = (await import("html2canvas")).default;
+    return html2canvas(certRef.current, {
+      scale: 2,
+      backgroundColor: "#fdfaf3",
+      useCORS: true,
+      onclone: (clonedDoc) => {
+        sanitizeClone(clonedDoc);
+      },
+    });
+  }
+
   async function downloadPNG() {
     if (!certRef.current || !readyToRender()) return;
     setBusy("png");
     try {
       await ensureFonts();
-      const html2canvas = (await import("html2canvas")).default;
-      const canvas = await html2canvas(certRef.current, { scale: 2, backgroundColor: "#fdfaf3", useCORS: true });
+      const canvas = await renderCertificate();
       const link = document.createElement("a");
       link.download = `${brand}_${active.type}_${selectedCourse!.title}.png`.replace(/[^\w.-]+/g, "_");
       link.href = canvas.toDataURL("image/png");
@@ -163,9 +200,8 @@ function CertificatesPage() {
     setBusy("pdf");
     try {
       await ensureFonts();
-      const html2canvas = (await import("html2canvas")).default;
+      const canvas = await renderCertificate();
       const { jsPDF } = await import("jspdf");
-      const canvas = await html2canvas(certRef.current, { scale: 2, backgroundColor: "#fdfaf3", useCORS: true });
       const img = canvas.toDataURL("image/png");
       const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
       const pw = pdf.internal.pageSize.getWidth();
